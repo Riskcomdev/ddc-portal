@@ -146,7 +146,17 @@
       position: relative;
     }
 
-        /* วงกลมรอบโลโก้ (ปรับให้ขอบชมพูชิดวงขาวมากขึ้น) */
+    /* กำหนดให้เป็นวงรีและรักษาความโค้งให้สวยงาม */
+    .oval-shape {
+      border-radius: 999px; /* ใช้ค่าสูงๆ เพื่อให้ขอบโค้งมนที่สุด */
+      aspect-ratio: 4 / 3; /* กำหนดสัดส่วน กว้าง 4 ส่วน : สูง 3 ส่วน เพื่อให้เป็นวงรี */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+   /* วงกลมรอบโลโก้ (ปรับให้ขอบชมพูชิดวงขาวมากขึ้น) */
     .avatar-ring {
       background: conic-gradient(from 0deg, #ec407a, #f06292, #ec407a);
       padding: 3px; 
@@ -162,11 +172,12 @@
         <i data-lucide="share" class="w-5 h-5"></i>
       </button>
 
-      <div class="avatar-ring rounded-full mb-6 md:mb-10 animate-in shadow-xl" style="animation-delay:0.1s">
-        <div class="w-32 h-32 md:w-48 md:h-42 rounded-full bg-white flex items-center justify-center overflow-hidden">
+      <div class="avatar-ring oval-shape mb-6 md:mb-10 animate-in shadow-xl w-40 md:w-56" 
+          style="animation-delay: 0.1s; padding: 3px;">
+        <div class="w-full h-full oval-shape bg-white flex items-center justify-center">
           <img src="https://datariskcom-ddc.moph.go.th/wp-content/uploads/2025/10/โลโก้กรมควบคุมโรค-1626x2048.png" 
               alt="DDC Logo" 
-              class="w-full h-full object-contain p-2">
+              class="w-full h-full object-contain p-3">
         </div>
       </div>
 
