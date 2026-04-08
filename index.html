@@ -142,8 +142,14 @@
       border-radius: 2.5rem; /* มุมโค้งมน */
       padding: 2.5rem 1.25rem; /* ระยะห่างด้านใน */
       width: 100%;
-      max-width: 720px; /* ขนาดหน้าจอคอมไม่เกินนี้ */
+      max-width: 720px; 
       position: relative;
+    }
+
+        /* วงกลมรอบโลโก้ (ปรับให้ขอบชมพูชิดวงขาวมากขึ้น) */
+    .avatar-ring {
+      background: conic-gradient(from 0deg, #ec407a, #f06292, #ec407a);
+      padding: 3px; 
     }
   </style>
 </head>
@@ -231,6 +237,7 @@
     </div> 
 </div>
 
+
 <div id="shareModal" class="modal-overlay" onclick="closeShare()">
     <div class="modal-content" onclick="event.stopPropagation()">
       <button onclick="closeShare()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
@@ -265,11 +272,13 @@
     </div>
     <div class="share-item" onclick="shareTo('twitter')">
       <div class="share-icon-circle bg-black shadow-sm"><span class="text-white font-black text-xs">X</span></div>
-      <span class="text-[10px] font-bold text-gray-500">Twitter</span>
+      <span class="text-[10px] font-bold text-gray-500">X</span>
     </div>
-    <div class="share-item" onclick="window.print()">
-      <div class="share-icon-circle bg-gray-100 shadow-sm"><i data-lucide="printer" class="w-5 h-5 text-gray-600"></i></div>
-      <span class="text-[10px] font-bold text-gray-500">Print</span>
+    <div class="share-item" onclick="shareTo('messenger')">
+      <div class="share-icon-circle bg-[#00B2FF] shadow-sm">
+        <i data-lucide="message-circle" class="w-5 h-5 text-white"></i>
+      </div>
+      <span class="text-[10px] font-bold text-gray-500">Messenger</span>
     </div>
   </div>
 </div>
