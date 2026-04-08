@@ -6,42 +6,73 @@
   <title>DDC Health Portal</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
+<style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; font-family: 'Outfit', sans-serif; }
 
+    /* พื้นหลังไล่สีชมพู */
     .bio-bg {
       background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 35%, #ec407a 100%);
       position: relative;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 2rem 1rem;
-    }
-    
-    @media (min-width: 768px) {
-      .bio-bg { padding: 4rem 2rem; }
+      padding: 1.5rem 1rem;
     }
 
+    /* กล่องกระจกใส (Glassmorphism Card) */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 2.5rem;
+      padding: 3rem 1.25rem;
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+    }
+
+    /* ปุ่มลิงก์โซเชียล */
     .link-btn {
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
       transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-      background: rgba(255, 255, 255, 0.85) !important;
-      border: 1px solid rgba(255, 255, 255, 0.95) !important;
+      background: rgba(255, 255, 255, 0.9) !important;
+      border: 1px solid rgba(255, 255, 255, 0.5) !important;
+      color: #c2185b !important; /* ปรับจากสีดำเป็นสีชมพูเข้ม */
     }
 
     .link-btn:hover {
       background: rgba(255, 255, 255, 1) !important;
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(236, 64, 122, 0.25);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
 
+    /* วงกลมรอบโลโก้ */
     .avatar-ring {
       background: conic-gradient(from 0deg, #ec407a, #f06292, #ec407a);
-      padding: 3px; /* ปรับขอบให้บางลงเล็กน้อย */
+      padding: 6px; 
       animation: ring-spin 10s linear infinite;
     }
+
+    /* ปุ่มแชร์ขวาบน */
+    .share-trigger {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(5px);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      color: #c2185b;
+      z-index: 10;
+    }
+    .share-trigger:hover { background: rgba(255, 255, 255, 0.8); transform: scale(1.1); }
 
     @keyframes ring-spin { to { transform: rotate(360deg); } }
     @keyframes fade-up {
@@ -49,12 +80,82 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-in { animation: fade-up 0.6s ease-out both; }
+
+    /* Popup Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: white;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 2rem;
+      padding: 2rem;
+      position: relative;
+      animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .share-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .share-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .share-icon-circle {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+    .share-item:hover .share-icon-circle { transform: scale(1.1); }
+
+        .glass-card {
+      background: rgba(255, 255, 255, 0.2); /* โปร่งใสเล็กน้อย */
+      backdrop-filter: blur(20px); /* ความเบลอของพื้นหลัง */
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3); /* ขอบใสๆ */
+      border-radius: 2.5rem; /* มุมโค้งมน */
+      padding: 2.5rem 1.25rem; /* ระยะห่างด้านใน */
+      width: 100%;
+      max-width: 620px; /* ขนาดหน้าจอคอมไม่เกินนี้ */
+      position: relative;
+    }
   </style>
 </head>
 <body class="h-full">
-  <div class="bio-bg min-h-full w-full flex flex-col items-center" id="app-root">
-    <div class="relative z-10 w-full max-w-[500px] flex flex-col items-center">
+  <div class="bio-bg min-h-full w-full flex items-center justify-center" id="app-root">
+    
+    <div class="glass-card flex flex-col items-center shadow-2xl animate-in">
       
+      <button onclick="openShare()" class="share-trigger">
+        <i data-lucide="share" class="w-5 h-5"></i>
+      </button>
+
       <div class="avatar-ring rounded-full mb-6 md:mb-10 animate-in shadow-xl" style="animation-delay:0.1s">
         <div class="w-32 h-32 md:w-48 md:h-42 rounded-full bg-white flex items-center justify-center overflow-hidden">
           <img src="https://datariskcom-ddc.moph.go.th/wp-content/uploads/2025/10/โลโก้กรมควบคุมโรค-1626x2048.png" 
@@ -63,116 +164,132 @@
         </div>
       </div>
 
-      <h1 class="text-xl md:text-2xl font-semibold mb-2 animate-in text-center px-2" id="display-name">Department of Disease Control (DDC)</h1>
-      <p class="text-sm md:text-base font-light mb-1 text-center animate-in" id="thai-name">กรมควบคุมโรค</p>
-      <p class="text-xs md:text-sm font-light mb-8 opacity-70 text-center max-w-[85%] animate-in" id="bio-text"></p>
+      <h1 class="text-xl md:text-2xl font-bold mb-1 text-[#000000] text-center" id="display-name">Department of Disease Control (DDC)</h1>
+      <p class="text-sm md:text-base font-medium mb-6 text-[#000000] opacity-90 text-center" id="thai-name">กรมควบคุมโรค</p>
 
-      <div class="w-full flex flex-col gap-3 md:gap-4 px-2" id="links-container">
-        <a href="https://shorturl-ddc.moph.go.th/DDahM" target="_blank" class="link-btn w-full rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center gap-3 md:gap-4 animate-in shadow-sm" style="animation-delay:0.35s">
-          <i data-lucide="facebook" class="w-5 h-5 md:w-6 md:h-6"></i>
-          <span class="flex-1 font-medium text-sm md:text-base">facebook กรมควบคุมโรค</span>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-50"></i>
+      <div class="w-full flex flex-col gap-3 px-2" id="links-container">
+        
+        <a href="https://shorturl-ddc.moph.go.th/DDahM" target="_blank" class="link-btn w-full rounded-xl px-5 py-4 flex items-center gap-4 animate-in shadow-sm" style="animation-delay:0.3s">
+          <i data-lucide="facebook" class="w-5 h-5 text-[#000000]"></i>
+          <span class="flex-1 font-semibold text-sm text-[#000000]">facebook กรมควบคุมโรค</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#000000] opacity-40"></i>
         </a>
 
-        <a href="https://shorturl-ddc.moph.go.th/kZAEc" target="_blank" class="link-btn w-full rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center gap-3 md:gap-4 animate-in shadow-sm" style="animation-delay:0.4s">
-          <i data-lucide="facebook" class="w-5 h-5 md:w-6 md:h-6"></i>
-          <span class="flex-1 font-medium text-sm md:text-base">facebook กดดู รู้โรค</span>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-50"></i>
+        <a href="https://shorturl-ddc.moph.go.th/kZAEc" target="_blank" class="link-btn w-full rounded-xl px-5 py-4 flex items-center gap-4 animate-in shadow-sm" style="animation-delay:0.35s">
+          <i data-lucide="facebook" class="w-5 h-5 text-[#000000]"></i>
+          <span class="flex-1 font-semibold text-sm text-[#000000]">facebook กดดู รู้โรค</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#000000] opacity-40"></i>
         </a>
 
-        <a href="https://shorturl-ddc.moph.go.th/hFJ3A" target="_blank" class="link-btn w-full rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center gap-3 md:gap-4 animate-in shadow-sm" style="animation-delay:0.45s">
-          <i class="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center not-italic font-bold text-lg" style="font-family: sans-serif;">X</i>
-          <span class="flex-1 font-medium text-sm md:text-base">X กรมควบคุมโรค</span>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-50"></i>
+        <a href="https://shorturl-ddc.moph.go.th/hFJ3A" target="_blank" class="link-btn w-full rounded-xl px-5 py-4 flex items-center gap-4 animate-in shadow-sm" style="animation-delay:0.4s">
+          <span class="w-5 h-5 flex items-center justify-center font-black text-lg text-[#000000]">X</span>
+          <span class="flex-1 font-semibold text-sm text-[#000000]">X กรมควบคุมโรค</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#000000] opacity-40"></i>
         </a>
 
-        <a href="https://shorturl-ddc.moph.go.th/hvrtQ" target="_blank" class="link-btn w-full rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center gap-3 md:gap-4 animate-in shadow-sm" style="animation-delay:0.5s">
-          <i data-lucide="music-2" class="w-5 h-5 md:w-6 md:h-6"></i>
-          <span class="flex-1 font-medium text-sm md:text-base">TikTok กรมควบคุมโรค</span>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-50"></i>
+        <a href="https://shorturl-ddc.moph.go.th/hvrtQ" target="_blank" class="link-btn w-full rounded-xl px-5 py-4 flex items-center gap-4 animate-in shadow-sm" style="animation-delay:0.45s">
+          <i data-lucide="music-2" class="w-5 h-5 text-[#000000]"></i>
+          <span class="flex-1 font-semibold text-sm text-[#000000]">TikTok กรมควบคุมโรค</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#000000] opacity-40"></i>
         </a>
 
-        <a href="https://shorturl-ddc.moph.go.th/OGsyZ" target="_blank" class="link-btn w-full rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center gap-3 md:gap-4 animate-in shadow-sm" style="animation-delay:0.55s">
-          <i data-lucide="instagram" class="w-5 h-5 md:w-6 md:h-6"></i>
-          <span class="flex-1 font-medium text-sm md:text-base">IG: ddcthailand_official</span>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-50"></i>
+        <a href="https://shorturl-ddc.moph.go.th/OGsyZ" target="_blank" class="link-btn w-full rounded-xl px-5 py-4 flex items-center gap-4 animate-in shadow-sm" style="animation-delay:0.5s">
+          <i data-lucide="instagram" class="w-5 h-5 text-[#000000]"></i>
+          <span class="flex-1 font-semibold text-sm text-[#000000]">IG: ddcthailand_official</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#000000] opacity-40"></i>
         </a>
 
-        <a href="https://shorturl-ddc.moph.go.th/J3g5i" target="_blank" class="link-btn w-full rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center gap-3 md:gap-4 animate-in shadow-sm" style="animation-delay:0.6s">
-          <i data-lucide="youtube" class="w-5 h-5 md:w-6 md:h-6"></i>
-          <span class="flex-1 font-medium text-sm md:text-base">YouTube กรมควบคุมโรค</span>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-50"></i>
+        <a href="https://shorturl-ddc.moph.go.th/J3g5i" target="_blank" class="link-btn w-full rounded-xl px-5 py-4 flex items-center gap-4 animate-in shadow-sm" style="animation-delay:0.55s">
+          <i data-lucide="youtube" class="w-5 h-5 text-[#000000]"></i>
+          <span class="flex-1 font-semibold text-sm text-[#000000]">YouTube กรมควบคุมโรค</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#000000] opacity-40"></i>
         </a>
 
-        <a href="https://shorturl-ddc.moph.go.th/aYYBH" target="_blank" class="link-btn w-full rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center gap-3 md:gap-4 animate-in shadow-sm" style="animation-delay:0.65s">
-          <i data-lucide="message-circle" class="w-5 h-5 md:w-6 md:h-6"></i>
-          <span class="flex-1 font-medium text-sm md:text-base">LINE กรมควบคุมโรค</span>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-50"></i>
+        <a href="https://shorturl-ddc.moph.go.th/aYYBH" target="_blank" class="link-btn w-full rounded-xl px-5 py-4 flex items-center gap-4 animate-in shadow-sm" style="animation-delay:0.6s">
+          <i data-lucide="message-circle" class="w-5 h-5 text-[#000000]"></i>
+          <span class="flex-1 font-semibold text-sm text-[#000000]">LINE กรมควบคุมโรค</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#000000] opacity-40"></i>
         </a>
 
-        <a href="https://datariskcom-ddc.moph.go.th/" target="_blank" class="link-btn w-full rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center gap-3 md:gap-4 animate-in shadow-sm" style="animation-delay:0.7s">
-          <i data-lucide="library" class="w-5 h-5 md:w-6 md:h-6"></i>
-          <span class="flex-1 font-medium text-sm md:text-base">คลังสื่อโรคและภัยสุขภาพ</span>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-50"></i>
+        <a href="https://datariskcom-ddc.moph.go.th/" target="_blank" class="link-btn w-full rounded-xl px-5 py-4 flex items-center gap-4 animate-in shadow-sm" style="animation-delay:0.65s">
+          <i data-lucide="library" class="w-5 h-5 text-[#000000]"></i>
+          <span class="flex-1 font-semibold text-sm text-[#000000]">คลังสื่อโรคและภัยสุขภาพ</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#000000] opacity-40"></i>
         </a>
 
-        <a href="https://ddc.moph.go.th/index.php" target="_blank" class="link-btn w-full rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center gap-3 md:gap-4 animate-in shadow-sm" style="animation-delay:0.7s">
-          <i data-lucide="globe" class="w-5 h-5 md:w-6 md:h-6"></i>
-          <span class="flex-1 font-medium text-sm md:text-base">เว็บไซต์กรมควบคุมโรค</span>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-50"></i>
+        <a href="https://ddc.moph.go.th/index.php" target="_blank" class="link-btn w-full rounded-xl px-5 py-4 flex items-center gap-4 animate-in shadow-sm" style="animation-delay:0.7s">
+          <i data-lucide="globe" class="w-5 h-5 text-[#000000]"></i>
+          <span class="flex-1 font-semibold text-sm text-[#000000]">เว็บไซต์กรมควบคุมโรค</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#000000] opacity-40"></i>
         </a>
-  
+
       </div>
 
-      <p class="mt-12 mb-8 text-[10px] md:text-xs opacity-50 animate-in text-center" style="animation-delay:0.8s">
+<p class="mt-12 mb-8 text-[10px] md:text-xs opacity-50 animate-in text-center" style="animation-delay:0.8s">
         Power by Department of Disease Control Thailand
       </p>
+    </div> 
+</div>
+
+<div id="shareModal" class="modal-overlay" onclick="closeShare()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button onclick="closeShare()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+      
+      <h3 class="text-center font-bold text-lg mb-4 text-[#c2185b]">Share Link</h3>
+      
+      <div class="bg-gradient-to-br from-[#ec407a] to-[#c2185b] rounded-3xl p-6 text-center text-white mb-6 shadow-lg">
+        <div class="w-16 h-16 bg-white rounded-full mx-auto mb-3 flex items-center justify-center p-2 shadow-inner">
+          <img src="https://datariskcom-ddc.moph.go.th/wp-content/uploads/2025/10/โลโก้กรมควบคุมโรค-1626x2048.png" class="w-full h-full object-contain">
+        </div>
+        <p class="font-bold text-lg">@ddcthailand</p>
+        <p class="text-xs opacity-80">กรมควบคุมโรค</p>
+      </div>
+
+      <div class="share-grid">
+        <div class="share-item" onclick="copyLink()">
+          <div class="share-icon-circle bg-gray-100"><i data-lucide="link" class="w-5 h-5 text-gray-600"></i></div>
+          <span class="text-[10px] font-bold text-gray-500">Copy</span>
+        </div>
+        <div class="share-item" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href))">
+          <div class="share-icon-circle bg-[#1877F2]"><i data-lucide="facebook" class="w-5 h-5 text-white"></i></div>
+          <span class="text-[10px] font-bold text-gray-500">Facebook</span>
+        </div>
+        <div class="share-item" onclick="window.open('https://lineit.line.me/share/ui?url=' + encodeURIComponent(window.location.href))">
+          <div class="share-icon-circle bg-[#06C755]"><i data-lucide="message-circle" class="w-5 h-5 text-white"></i></div>
+          <span class="text-[10px] font-bold text-gray-500">Line</span>
+        </div>
+        <div class="share-item" onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href))">
+          <div class="share-icon-circle bg-black"><span class="text-white font-black text-xs">X</span></div>
+          <span class="text-[10px] font-bold text-gray-500">X</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script>
+<script>
     lucide.createIcons();
 
-    const defaultConfig = {
-      display_name: 'Department of Disease Control (DDC)',
-      thai_name: 'กรมควบคุมโรค',
-      bio_text: 'Providing essential health information and resources',
-      background_color: '#fce4ec',
-      text_color: '#c2185b',
-      accent_color: '#ec407a',
-      surface_color: 'rgba(255,255,255,0.85)'
-    };
-
-    function applyConfig(config) {
-      const c = key => config[key] || defaultConfig[key];
-      const textCol = c('text_color');
-
-      document.getElementById('display-name').textContent = c('display_name');
-      document.getElementById('thai-name').textContent = c('thai_name');
-      document.getElementById('bio-text').textContent = c('bio_text');
-
-      const root = document.getElementById('app-root');
-      root.style.background = `linear-gradient(135deg, ${c('background_color')} 0%, #f8bbd0 35%, ${c('accent_color')} 100%)`;
-      
-      document.getElementById('display-name').style.color = textCol;
-      document.getElementById('thai-name').style.color = textCol;
-      document.getElementById('bio-text').style.color = textCol;
-
-      document.querySelectorAll('.link-btn').forEach(btn => {
-        btn.style.background = c('surface_color');
-        btn.querySelectorAll('i, span').forEach(el => el.style.color = textCol);
-      });
+    function openShare() {
+      document.getElementById('shareModal').style.display = 'flex';
     }
 
-    window.elementSdk.init({
-      defaultConfig,
-      onConfigChange: applyConfig,
-      mapToEditPanelValues: (config) => new Map([
-        ['display_name', config.display_name || defaultConfig.display_name],
-        ['thai_name', config.thai_name || defaultConfig.thai_name],
-        ['bio_text', config.bio_text || defaultConfig.bio_text]
-      ])
-    });
+    function closeShare() {
+      document.getElementById('shareModal').style.display = 'none';
+    }
+
+    function copyLink() {
+          const shareUrl = "https://riskcomdev.github.io/ddc-portal/";
+          
+          navigator.clipboard.writeText(shareUrl).then(() => {
+            // เปลี่ยน Alert เป็นข้อความยืนยันสวยๆ
+            alert("คัดลอกลิงก์เรียบร้อยแล้ว!");
+            closeShare();
+          }).catch(err => {
+            console.error('ไม่สามารถคัดลอกลิงก์ได้:', err);
+          });
+    }
   </script>
 </body>
 </html>
