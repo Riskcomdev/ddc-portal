@@ -311,9 +311,27 @@
     function shareTo(platform) {
       const url = encodeURIComponent(MAIN_URL);
       let shareEndpoint = '';
-      if (platform === 'facebook') shareEndpoint = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-      else if (platform === 'line') shareEndpoint = `https://lineit.line.me/share/ui?url=${url}`;
-      else if (platform === 'twitter') shareEndpoint = `https://twitter.com/intent/tweet?url=${url}`;
+
+      if (platform === 'facebook') {
+        shareEndpoint = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+      } 
+      else if (platform === 'messenger') {
+        // ตรวจสอบว่าเป็น Mobile หรือ Desktop เพื่อเลือกใช้ URL ที่เหมาะสม
+        if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+          // สำหรับเปิดแอป Messenger โดยตรงบนมือถือ
+          shareEndpoint = `fb-messenger://share/?link=${url}`;
+        } else {
+          // สำหรับเปิดหน้าเว็บ Facebook Dialog บนคอมพิวเตอร์ (ต้องใช้ app_id ซึ่งใส่เลขสมมติไว้ได้ครับ)
+          shareEndpoint = `https://www.facebook.com/dialog/send?link=${url}&app_id=123456789&redirect_uri=${url}`;
+        }
+      } 
+      else if (platform === 'line') {
+        shareEndpoint = `https://lineit.line.me/share/ui?url=${url}`;
+      } 
+      else if (platform === 'twitter') {
+        shareEndpoint = `https://twitter.com/intent/tweet?url=${url}`;
+      }
+
       window.open(shareEndpoint, '_blank');
     }
   </script>
