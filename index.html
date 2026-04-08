@@ -236,40 +236,54 @@
       <button onclick="closeShare()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
         <i data-lucide="x" class="w-6 h-6"></i>
       </button>
-      
-      <h3 class="text-center font-bold text-lg mb-4 text-[#c2185b]">Share Link</h3>
-      
-      <div class="bg-gradient-to-br from-[#ec407a] to-[#c2185b] rounded-3xl p-6 text-center text-white mb-6 shadow-lg">
-        <div class="w-16 h-16 bg-white rounded-full mx-auto mb-3 flex items-center justify-center p-2 shadow-inner">
-          <img src="https://datariskcom-ddc.moph.go.th/wp-content/uploads/2025/10/โลโก้กรมควบคุมโรค-1626x2048.png" class="w-full h-full object-contain">
-        </div>
-        <p class="font-bold text-lg">@ddcthailand</p>
-        <p class="text-xs opacity-80">กรมควบคุมโรค</p>
-      </div>
+  <h3 class="text-center font-bold text-lg mb-4 text-[#c2185b]">Share Link</h3>
+  
+  <div class="bg-gradient-to-br from-[#ec407a] to-[#c2185b] rounded-3xl p-6 text-center text-white mb-6 shadow-lg">
+    <div class="w-16 h-16 bg-white rounded-full mx-auto mb-3 flex items-center justify-center p-2 shadow-inner">
+      <img src="https://datariskcom-ddc.moph.go.th/wp-content/uploads/2025/10/โลโก้กรมควบคุมโรค-1626x2048.png" class="w-full h-full object-contain">
+    </div>
+    <p class="font-bold text-lg">@ddcthailand</p>
+    <p class="text-xs opacity-80">กรมควบคุมโรค</p>
+  </div>
 
-      <div class="share-grid">
-        <div class="share-item" onclick="copyLink()">
-          <div class="share-icon-circle bg-gray-100"><i data-lucide="link" class="w-5 h-5 text-gray-600"></i></div>
-          <span class="text-[10px] font-bold text-gray-500">Copy</span>
-        </div>
-        <div class="share-item" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href))">
-          <div class="share-icon-circle bg-[#1877F2]"><i data-lucide="facebook" class="w-5 h-5 text-white"></i></div>
-          <span class="text-[10px] font-bold text-gray-500">Facebook</span>
-        </div>
-        <div class="share-item" onclick="window.open('https://lineit.line.me/share/ui?url=' + encodeURIComponent(window.location.href))">
-          <div class="share-icon-circle bg-[#06C755]"><i data-lucide="message-circle" class="w-5 h-5 text-white"></i></div>
-          <span class="text-[10px] font-bold text-gray-500">Line</span>
-        </div>
-        <div class="share-item" onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href))">
-          <div class="share-icon-circle bg-black"><span class="text-white font-black text-xs">X</span></div>
-          <span class="text-[10px] font-bold text-gray-500">X</span>
-        </div>
-      </div>
+  <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl p-2 mb-6">
+    <input type="text" readonly value="https://riskcomdev.github.io/ddc-portal/" 
+           class="flex-1 bg-transparent text-[11px] text-gray-500 outline-none px-2 font-medium">
+    <button onclick="copyLink()" class="bg-[#c2185b] text-white text-[11px] font-bold px-4 py-2 rounded-lg hover:bg-[#ad1457] transition-colors">
+      Copy
+    </button>
+  </div>
+
+  <div class="share-grid">
+    <div class="share-item" onclick="shareTo('facebook')">
+      <div class="share-icon-circle bg-[#1877F2] shadow-sm"><i data-lucide="facebook" class="w-5 h-5 text-white"></i></div>
+      <span class="text-[10px] font-bold text-gray-500">Facebook</span>
+    </div>
+    <div class="share-item" onclick="shareTo('line')">
+      <div class="share-icon-circle bg-[#06C755] shadow-sm"><i data-lucide="message-circle" class="w-5 h-5 text-white"></i></div>
+      <span class="text-[10px] font-bold text-gray-500">Line</span>
+    </div>
+    <div class="share-item" onclick="shareTo('twitter')">
+      <div class="share-icon-circle bg-black shadow-sm"><span class="text-white font-black text-xs">X</span></div>
+      <span class="text-[10px] font-bold text-gray-500">Twitter</span>
+    </div>
+    <div class="share-item" onclick="window.print()">
+      <div class="share-icon-circle bg-gray-100 shadow-sm"><i data-lucide="printer" class="w-5 h-5 text-gray-600"></i></div>
+      <span class="text-[10px] font-bold text-gray-500">Print</span>
     </div>
   </div>
+</div>
 
 <script>
     lucide.createIcons();
+
+    // บังคับให้หน้าเว็บเลื่อนไปบนสุดทุกครั้งที่มีการโหลดหน้าใหม่หรือรีเฟรช
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
+    const MAIN_URL = "https://riskcomdev.github.io/ddc-portal/";
 
     function openShare() {
       document.getElementById('shareModal').style.display = 'flex';
@@ -280,15 +294,18 @@
     }
 
     function copyLink() {
-          const shareUrl = "https://riskcomdev.github.io/ddc-portal/";
-          
-          navigator.clipboard.writeText(shareUrl).then(() => {
-            // เปลี่ยน Alert เป็นข้อความยืนยันสวยๆ
-            alert("คัดลอกลิงก์เรียบร้อยแล้ว!");
-            closeShare();
-          }).catch(err => {
-            console.error('ไม่สามารถคัดลอกลิงก์ได้:', err);
-          });
+      navigator.clipboard.writeText(MAIN_URL).then(() => {
+        alert("คัดลอกลิงก์ ddc-portal เรียบร้อยแล้ว!");
+      });
+    }
+
+    function shareTo(platform) {
+      const url = encodeURIComponent(MAIN_URL);
+      let shareEndpoint = '';
+      if (platform === 'facebook') shareEndpoint = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+      else if (platform === 'line') shareEndpoint = `https://lineit.line.me/share/ui?url=${url}`;
+      else if (platform === 'twitter') shareEndpoint = `https://twitter.com/intent/tweet?url=${url}`;
+      window.open(shareEndpoint, '_blank');
     }
   </script>
 </body>
